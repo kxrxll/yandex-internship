@@ -8,9 +8,9 @@
 }
 
 .tile {
-  border: 3px solid black;
-  width: 100px;
-  height: 100px;
+  border: 1px solid black;
+  width: 20px;
+  height: 20px;
   margin: 3px;
 }
 
