@@ -4,8 +4,8 @@ class BooleanCells {
       alert("Not a proper field, sorry!");
     } else if (jsonStartingState) {
       jsonStartingState = JSON.parse(jsonStartingState);
-      this.width = jsonStartingState.size.width;
-      this.height = jsonStartingState.size.height;
+      this.width = jsonStartingState.width;
+      this.height = jsonStartingState.height;
       this.element = element;
       this.render();
       this.start(jsonStartingState.cells);
@@ -122,10 +122,13 @@ class BooleanCells {
     }
     let actualState = {};
     actualState.cells = cellsObject;
-    actualState.size.width = this.width;
-    actualState.size.height = this.height;
+    actualState.width = this.width;
+    actualState.height = this.height;
     setTimeout(() => this.render(cellsObject), 500);
-    setTimeout(() => this.calculate(cellsObject), 1000);
+    setTimeout(() => {
+      console.log(actualState);
+      this.calculate(cellsObject);
+    }, 1000);
   }
 
   render(cellsObject) {
