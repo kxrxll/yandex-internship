@@ -1,155 +1,113 @@
 class BooleanCells {
   constructor(m, n, element) {
     if (m < 2 || n < 2) {
-      alert("Not a proper field, sorry!");
-    }  else {
+      throw new Error('Not a proper field, sorry!');
+    } else {
       this.width = m;
       this.height = n;
       this.element = element;
-      this.render();
-      this.start();
+      // Генерация поля случайным образом
+      this.cellsMap = this.mapCreation();
+      // Отрисовка стартового поля
+      this.tiles = this.startingRender();
+      // Перерасчет и переотрисовка поля с первого элемента начинается раз в секунду
+      this.interval = setInterval(() => {
+        this.cellsMap = this.recalculateMap(this.cellsMap, this.height);
+      }, 1000);
     }
   }
 
-  start(obj) {
-    if (!obj) {
-      const numberOfCells = this.width * this.height;
-      let cellsObject = {};
-      for (let i = 1; i <= numberOfCells; i++) {
-        if (Math.random() > 0.5) {
-          cellsObject[i] = 1;
+  // Метод для создания изначального мэпа с информацией о жизни клеток в поле
+  mapCreation() {
+    const numberOfCells = this.width * this.height;
+    const cellsMap = new Map();
+    for (let i = 1; i <= numberOfCells; i += 1) {
+      if (Math.random() > 0.5) {
+        cellsMap.set(i, '1');
+      } else {
+        cellsMap.set(i, '0');
+      }
+    }
+    return cellsMap;
+  }
+
+  // Метод для стартовой отрисовки поля и ячеек
+  startingRender() {
+    let stringToInsert = '';
+    let cell = 1;
+    // Код получился достаточно сложный но исполняется только при первой отрисовке
+    for (let i = 0; i < this.width; i += 1) {
+      stringToInsert += '<div class="column">';
+      for (let k = 0; k < this.height; k += 1) {
+        if (this.cellsMap.get(cell) === '1') {
+          stringToInsert += '<div class="tile tile-alive"></div>';
         } else {
-          cellsObject[i] = 0;
+          stringToInsert += '<div class="tile tile-dead"></div>';
         }
+        cell += 1;
       }
-      this.render(cellsObject);
-      this.calculate(cellsObject);
-    } else {
-      this.render(obj);
-      this.calculate(obj);
+      stringToInsert += '</div>';
     }
+    this.element.insertAdjacentHTML('afterbegin', stringToInsert);
+    return Array.from(this.element.querySelectorAll('.tile'));
   }
 
-  calculate(cellsObject) {
-    for (let cell in cellsObject) {
-      cell = parseInt(cell);
-      let closeCellsObject = {
-        closeAlive: 0,
-        closeDead: 0,
-      };
-      const nextCell = cellsObject[cell + 1];
-      const previousCell = cellsObject[cell - 1];
-      const nextColumnCell = cellsObject[cell + this.height];
-      const previousColumnCell = cellsObject[cell - this.height];
-      const rightBottomCell = cellsObject[cell + this.height + 1];
-      const rightUpCell = cellsObject[cell + this.height - 1];
-      const leftBottomCell = cellsObject[cell - this.height + 1];
-      const leftUpCell = cellsObject[cell - this.height - 1];
-
-      if (typeof nextCell != "undefined" && cell % this.height != 0) {
-        if (nextCell == 1) {
-          closeCellsObject.closeAlive += 1;
-        } else if (nextCell == 0) {
-          closeCellsObject.closeDead += 1;
-        }
+  // Метод для перерасчета мэпа с информацией о жизни клеток в поле
+  recalculateMap() {
+    // Копия мэпа для внесения правок на лету, без правок по ссылке аргумента
+    const resultMap = new Map(this.cellsMap);
+    // Цикл идущий по ключам и значениям передаваемого мэпа
+    for (const [cell, value] of resultMap.entries()) {
+      // Переменная хранящая информацию о фактических соседях
+      let closeAliveCells = 0;
+      // Проверка следующей снизу с проверкой нахождения в нужном столбце через кратность
+      if (resultMap.get(cell + 1) === '1' && cell % this.height !== 0) {
+        closeAliveCells += 1;
       }
-      if (typeof previousCell != "undefined" && (cell - 1) % this.height != 0) {
-        if (previousCell == 1) {
-          closeCellsObject.closeAlive += 1;
-        } else if (previousCell == 0) {
-          closeCellsObject.closeDead += 1;
-        }
+      // Проверка предыдущей сверху с проверкой нахождения в нужном столбце через кратность
+      if (resultMap.get(cell - 1) === '1' && cell % this.height !== 0) {
+        closeAliveCells += 1;
       }
-      if (typeof nextColumnCell != "undefined") {
-        if (nextColumnCell == 1) {
-          closeCellsObject.closeAlive += 1;
-        } else if (nextColumnCell == 0) {
-          closeCellsObject.closeDead += 1;
-        }
+      // Проверка ячейки справа
+      if (resultMap.get(cell + this.height) === '1') {
+        closeAliveCells += 1;
       }
-      if (typeof previousColumnCell != "undefined") {
-        if (previousColumnCell == 1) {
-          closeCellsObject.closeAlive += 1;
-        } else if (previousColumnCell == 0) {
-          closeCellsObject.closeDead += 1;
-        }
+      // Проверка ячейки слева
+      if (resultMap.get(cell - this.height) === '1') {
+        closeAliveCells += 1;
       }
-      if (typeof rightBottomCell != "undefined" && cell % this.height != 0) {
-        if (rightBottomCell == 1) {
-          closeCellsObject.closeAlive += 1;
-        } else if (rightBottomCell == 0) {
-          closeCellsObject.closeDead += 1;
-        }
+      // Проверка ячейки справа снизу с проверкой нахождения в нужном столбце через кратность
+      if (resultMap.get(cell + this.height + 1) === '1' && cell % this.height !== 0) {
+        closeAliveCells += 1;
       }
-      if (typeof rightUpCell != "undefined" && (cell - 1) % this.height != 0) {
-        if (rightUpCell == 1) {
-          closeCellsObject.closeAlive += 1;
-        } else if (rightUpCell == 0) {
-          closeCellsObject.closeDead += 1;
-        }
+      // Проверка ячейки справа сверху с проверкой нахождения в нужном столбце через кратность
+      if (resultMap.get(cell + this.height - 1) === '1' && (cell - 1) % this.height !== 0) {
+        closeAliveCells += 1;
       }
-      if (typeof leftBottomCell != "undefined" && cell % this.height != 0) {
-        if (leftBottomCell == 1) {
-          closeCellsObject.closeAlive += 1;
-        } else if (leftBottomCell == 0) {
-          closeCellsObject.closeDead += 1;
-        }
+      // Проверка ячейки слева снизу с проверкой нахождения в нужном столбце через кратность
+      if (resultMap.get(cell - this.height + 1) === '1' && cell % this.height !== 0) {
+        closeAliveCells += 1;
       }
-      if (typeof leftUpCell != "undefined" && (cell - 1) % this.height != 0) {
-        if (leftUpCell == 1) {
-          closeCellsObject.closeAlive += 1;
-        } else if (leftUpCell == 0) {
-          closeCellsObject.closeDead += 1;
-        }
+      // Проверка ячейки слева сверху с проверкой нахождения в нужном столбце через кратность
+      if (resultMap.get(cell - this.height - 1) === '1' && (cell - 1) % this.height !== 0) {
+        closeAliveCells += 1;
       }
-      if (cellsObject[cell] == 1) {
-        if (
-          closeCellsObject.closeAlive < 2 ||
-          closeCellsObject.closeAlive > 3
-        ) {
-          cellsObject[cell] = 0;
-        }
-      } else if (cellsObject[cell] == "0") {
-        if (closeCellsObject.closeAlive >= 3) {
-          cellsObject[cell] = 1;
-        }
+      // Проверка переменной состояния соседей и принятие решения о жизни текущей клетки
+      if (value === '0' && closeAliveCells >= 3) {
+        resultMap.set(cell, '1');
+        // Переотрисовка живой клетки
+        this.tiles[cell - 1].classList.remove('tile-dead');
+        this.tiles[cell - 1].classList.add('tile-alive');
+      }
+      if (value === '1' && (closeAliveCells < 2 || closeAliveCells > 3)) {
+        resultMap.set(cell, '0');
+        // Переотрисовка мертвой клетки
+        this.tiles[cell - 1].classList.remove('tile-alive');
+        this.tiles[cell - 1].classList.add('tile-dead');
       }
     }
-    let actualState = {};
-    actualState.cells = cellsObject;
-    actualState.width = this.width;
-    actualState.height = this.height;
-    setTimeout(() => this.render(cellsObject), 500);
-    setTimeout(() => {
-      console.log(actualState);
-      this.calculate(cellsObject);
-    }, 1000);
-  }
-
-  render(cellsObject) {
-    if (!cellsObject) {
-      let stringToInsert = "";
-      for (let i = 0; i < this.width; i++) {
-        stringToInsert += `<div class="column">`;
-        for (let k = 0; k < this.height; k++) {
-          stringToInsert += `<div class="tile"></div>`;
-        }
-        stringToInsert += `</div>`;
-      }
-      this.element.insertAdjacentHTML("afterbegin", stringToInsert);
-    }
-    let fieldElements = Array.from(this.element.querySelectorAll(".tile"));
-    for (let cell in cellsObject) {
-      cell = parseInt(cell);
-      if (cellsObject[cell] == 1) {
-        fieldElements[cell - 1].classList.remove("tile-dead");
-        fieldElements[cell - 1].classList.add("tile-alive");
-      } else if (cellsObject[cell] == 0) {
-        fieldElements[cell - 1].classList.remove("tile-alive");
-        fieldElements[cell - 1].classList.add("tile-dead");
-      }
-    }
+    return resultMap;
   }
 }
 
-const booleanCells = new BooleanCells(10, 10, document.querySelector(".main"));
+export default BooleanCells;

@@ -9,15 +9,16 @@
 
 .tile {
   border: 1px solid black;
-  width: 20px;
-  height: 20px;
-  margin: 3px;
+  width: 40px;
+  height: 40px;
+  margin: 5px;
+  border-radius: 5px;
 }
 
 .tile-alive {
-  background-color: darkgreen;
+  background-color: #73AD21;
 }
 
 .tile-dead {
-  background-color: darkred;
+  background-color: #C62727;
 }
