@@ -1,15 +1,8 @@
 class BooleanCells {
-  constructor(m, n, element, jsonStartingState) {
+  constructor(m, n, element) {
     if (m < 2 || n < 2) {
       alert("Not a proper field, sorry!");
-    } else if (jsonStartingState) {
-      jsonStartingState = JSON.parse(jsonStartingState);
-      this.width = jsonStartingState.width;
-      this.height = jsonStartingState.height;
-      this.element = element;
-      this.render();
-      this.start(jsonStartingState.cells);
-    } else {
+    }  else {
       this.width = m;
       this.height = n;
       this.element = element;
@@ -22,9 +15,11 @@ class BooleanCells {
     if (!obj) {
       const numberOfCells = this.width * this.height;
       let cellsObject = {};
-      for (let i = 1; i < numberOfCells; i++) {
+      for (let i = 1; i <= numberOfCells; i++) {
         if (Math.random() > 0.5) {
           cellsObject[i] = 1;
+        } else {
+          cellsObject[i] = 0;
         }
       }
       this.render(cellsObject);
