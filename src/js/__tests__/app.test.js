@@ -11,10 +11,3 @@ test('small field error test', () => {
     lifeGame();
   }).toThrow();
 });
-
-test('interval test', () => {
-  const lifeGame = new BooleanCells(3, 3, document.createElement('div'));
-  expect(lifeGame.interval).toHaveBeenLastCalledWith(() => {
-    lifeGame.cellsMap = lifeGame.recalculateMap(lifeGame.cellsMap, lifeGame.height);
-  }, 1000);
-});

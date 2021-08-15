@@ -1,5 +1,28 @@
+body {
+  display: flex;
+}
+
+p {
+  font-family: "Open sans", Georgia, Serif;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+input{
+  margin-top: 30px;
+}
+
+.readfile {
+  width: 500px;
+  margin-left: 50px;
+  background-color: lightblue;
+  padding: 50px;
+}
+
 .main {
   display: flex;
+  margin-top: 30px;
+  margin-left: 30px;
 }
 
 .column {

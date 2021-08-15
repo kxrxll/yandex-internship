@@ -1,13 +1,13 @@
 class BooleanCells {
-  constructor(m, n, element) {
+  constructor(m, n, element, cellsMap) {
     if (m < 2 || n < 2) {
       throw new Error('Not a proper field, sorry!');
     } else {
       this.width = m;
       this.height = n;
       this.element = element;
-      // Генерация поля случайным образом
-      this.cellsMap = this.mapCreation();
+      // Генерация поля случайным образом если запуск был не через загрузку файла
+      this.cellsMap = cellsMap || this.mapCreation();
       // Отрисовка стартового поля
       this.tiles = this.startingRender();
       // Перерасчет и переотрисовка поля с первого элемента начинается раз в секунду
