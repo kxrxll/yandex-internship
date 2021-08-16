@@ -14,7 +14,8 @@ inputElement.addEventListener('change', (e) => {
     const text = evt.target.result;
     const [cellsMap, width, height] = csvToGameData(text);
     document.querySelector('.main').innerHTML = '';
-    new BooleanCells(width, height, document.querySelector('.main'), cellsMap);
+    const booleanCells = new BooleanCells(width, height, document.querySelector('.main'), cellsMap);
+    booleanCells.launchGame();
   };
   reader.readAsText(input);
 });
@@ -22,5 +23,6 @@ inputElement.addEventListener('change', (e) => {
 button.addEventListener('click', (e) => {
   e.preventDefault();
   document.querySelector('.main').innerHTML = '';
-  new BooleanCells(8, 8, document.querySelector('.main'));
+  const booleanCells = new BooleanCells(8, 8, document.querySelector('.main'));
+  booleanCells.launchGame();
 });

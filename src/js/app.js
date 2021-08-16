@@ -8,13 +8,16 @@ class BooleanCells {
       this.element = element;
       // Генерация поля случайным образом если запуск был не через загрузку файла
       this.cellsMap = cellsMap || this.mapCreation();
-      // Отрисовка стартового поля
-      this.tiles = this.startingRender();
-      // Перерасчет и переотрисовка поля с первого элемента начинается раз в секунду
-      this.interval = setInterval(() => {
-        this.cellsMap = this.recalculateMap(this.cellsMap, this.height);
-      }, 1000);
     }
+  }
+
+  launchGame() {
+    // Отрисовка стартового поля
+    this.tiles = this.startingRender();
+    // Перерасчет и переотрисовка поля с первого элемента начинается раз в секунду
+    this.interval = setInterval(() => {
+      this.cellsMap = this.recalculateMap(this.cellsMap, this.height);
+    }, 1000);
   }
 
   // Метод для создания изначального мэпа с информацией о жизни клеток в поле
