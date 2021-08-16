@@ -1,4 +1,3 @@
-/* eslint-disable no-new */
 import './css/styles.css';
 import BooleanCells from './js/app';
 import csvToGameData from './js/parser';
